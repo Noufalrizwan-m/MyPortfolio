@@ -1,0 +1,12 @@
+/reference/
+/assets/
+/.env*
+/.git/
+/.DS_Store
+/README.md
+/IMAGE-PROMPT*.md
+/index.html
+/app.js
+/style.css
+/package-lock.json
+/dev.sh

@@ -48,7 +48,7 @@ function setupMotion() {
   document.documentElement.classList.toggle('motion-off', motionOff);
   if (motionOff || !assetsReady || !window.gsap || !window.ScrollTrigger || innerHeight < 620) return;
   const mobile = innerWidth <= 700;
-  const horizontal = innerWidth >= 600 && innerHeight >= 640;
+  const horizontal = innerWidth >= 900 && innerHeight >= 640;
   const pinJourney = innerWidth >= 900 && innerHeight >= 720;
   const w = innerWidth, h = innerHeight;
   gsap.registerPlugin(ScrollTrigger);
@@ -246,6 +246,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener('c
 window.addEventListener('popstate',()=>goToChapter(location.hash.slice(1)||'home'));
 function currentChapter(){
   const y=scrollY;
+  if(document.querySelector('#contact').getBoundingClientRect().top<innerHeight*.45)return 'contact';
   if(introTrigger&&y<=introTrigger.end+10)return y>introTrigger.end*.9?'about':'home';
   if(journeyTrigger&&y>=journeyTrigger.start&&y<=journeyTrigger.end+innerHeight)return 'journey';
   if(workTrigger&&y>=workTrigger.start&&y<=workTrigger.end+innerHeight)return 'work';
@@ -288,14 +289,6 @@ Promise.all(poseImages.map(image=>image.decode())).then(()=>{
 });
 setupMotion();
 
-// Local contact draft: no message is sent until the visitor sends it in their email app.
-document.querySelector('#contact-form').addEventListener('submit',event=>{
-  event.preventDefault();
-  const data=new FormData(event.currentTarget);
-  const body=`Name: ${data.get('name')}\nEmail: ${data.get('email')}\nCompany: ${data.get('company')||'—'}\n\n${data.get('message')}`;
-  location.href=`mailto:noufalrizwanuae@gmail.com?subject=${encodeURIComponent(data.get('topic')+' — '+data.get('name'))}&body=${encodeURIComponent(body)}`;
-  document.querySelector('#contact-status').textContent='Your email app was requested. Review and send the draft there, or email noufalrizwanuae@gmail.com directly.';
-});
 // Jump to a complete experience card, with the same chronology as scrolling.
 milestoneLabels.forEach((button,index)=>button.addEventListener('click',()=>{
   if(journeyTrigger){
@@ -303,3 +296,66 @@ milestoneLabels.forEach((button,index)=>button.addEventListener('click',()=>{
     window.scrollTo({top:journeyTrigger.start+(journeyTrigger.end-journeyTrigger.start)*progress,behavior:'instant'});
   }else milestones[index].scrollIntoView({behavior:'smooth',block:'center'});
 }));
+
+// Native mobile swiping keeps the full project list within one short section.
+const mobileProjectTrack=document.querySelector('.project-grid');
+const previousProject=document.querySelector('[data-project-step="-1"]');
+const nextProject=document.querySelector('[data-project-step="1"]');
+const mobileProjectCount=document.querySelector('.mobile-project-count');
+let mobileProjectIndex=0,projectScrollFrame,projectNavigationTimer;
+let projectNavigationTarget=null;
+function updateMobileProjects(){
+  if(innerWidth>=900)return;
+  const trackLeft=mobileProjectTrack.getBoundingClientRect().left;
+  const distances=projectPanels.map(panel=>Math.abs(panel.getBoundingClientRect().left-trackLeft));
+  mobileProjectIndex=projectNavigationTarget??distances.indexOf(Math.min(...distances));
+  mobileProjectCount.textContent=`${String(mobileProjectIndex+1).padStart(2,'0')} / ${String(projectPanels.length).padStart(2,'0')}`;
+  previousProject.disabled=mobileProjectIndex===0;
+  nextProject.disabled=mobileProjectIndex===projectPanels.length-1;
+}
+mobileProjectTrack.addEventListener('scroll',()=>{
+  cancelAnimationFrame(projectScrollFrame);projectScrollFrame=requestAnimationFrame(updateMobileProjects);
+},{passive:true});
+function navigateMobileProject(index,automatic=false){
+  mobileProjectCount.setAttribute('aria-live',automatic?'off':'polite');
+  const trackRect=mobileProjectTrack.getBoundingClientRect(),cardRect=projectPanels[index].getBoundingClientRect();
+  projectNavigationTarget=index;
+  updateMobileProjects();
+  clearTimeout(projectNavigationTimer);
+  projectNavigationTimer=setTimeout(()=>{projectNavigationTarget=null;updateMobileProjects()},600);
+  mobileProjectTrack.scrollTo({left:mobileProjectTrack.scrollLeft+cardRect.left-trackRect.left,behavior:motionOff?'instant':'smooth'});
+}
+const mobileWork=document.querySelector('#work');
+let projectAutoplayTimer,projectVisible=false,projectPointerDown=false,projectHovered=false;
+function scheduleProjectAutoplay(delay=4500){
+  clearTimeout(projectAutoplayTimer);
+  if(innerWidth>=900||motionOff||document.hidden||!projectVisible||projectPointerDown||projectHovered||mobileWork.contains(document.activeElement)||dialog.open)return;
+  projectAutoplayTimer=setTimeout(()=>{
+    navigateMobileProject((mobileProjectIndex+1)%projectPanels.length,true);
+    scheduleProjectAutoplay();
+  },delay);
+}
+new IntersectionObserver(entries=>{
+  projectVisible=entries[0].isIntersecting&&entries[0].intersectionRatio>=.6;
+  scheduleProjectAutoplay();
+},{threshold:[0,.6]}).observe(mobileProjectTrack);
+document.querySelectorAll('[data-project-step]').forEach(button=>button.addEventListener('click',()=>{
+  navigateMobileProject(Math.max(0,Math.min(projectPanels.length-1,mobileProjectIndex+Number(button.dataset.projectStep))));
+  scheduleProjectAutoplay(8000);
+}));
+mobileWork.addEventListener('pointerdown',()=>{
+  projectPointerDown=true;projectNavigationTarget=null;
+  clearTimeout(projectNavigationTimer);clearTimeout(projectAutoplayTimer);
+},{passive:true});
+const releaseProjectPointer=()=>{projectPointerDown=false;scheduleProjectAutoplay(8000)};
+window.addEventListener('pointerup',releaseProjectPointer,{passive:true});
+window.addEventListener('pointercancel',releaseProjectPointer,{passive:true});
+mobileWork.addEventListener('pointerenter',event=>{if(event.pointerType==='mouse'){projectHovered=true;scheduleProjectAutoplay()}});
+mobileWork.addEventListener('pointerleave',event=>{if(event.pointerType==='mouse'){projectHovered=false;scheduleProjectAutoplay(8000)}});
+mobileWork.addEventListener('focusin',()=>scheduleProjectAutoplay());
+mobileWork.addEventListener('focusout',()=>setTimeout(()=>scheduleProjectAutoplay(8000),0));
+mobileProjectTrack.addEventListener('scroll',()=>{if(projectNavigationTarget===null)scheduleProjectAutoplay(8000)},{passive:true});
+document.addEventListener('visibilitychange',()=>scheduleProjectAutoplay());
+dialog.addEventListener('close',()=>scheduleProjectAutoplay(8000));
+preference.addEventListener('change',()=>scheduleProjectAutoplay());
+window.addEventListener('resize',()=>{updateMobileProjects();scheduleProjectAutoplay()});

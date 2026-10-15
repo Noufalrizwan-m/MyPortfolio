@@ -3,5 +3,16 @@
   "framework": null,
   "installCommand": "",
   "buildCommand": "",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/500",
+      "destination": "/api/server-error"
+    }
+  ],
+  "functions": {
+    "api/server-error.mjs": {
+      "includeFiles": "dist/500.html"
+    }
+  }
 }
