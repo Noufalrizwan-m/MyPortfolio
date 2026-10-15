@@ -1,0 +1,3 @@
+Generated with the built-in image generation tool.
+
+Use case: stylized-concept. Create a polished 3D animated-film character for a personal portfolio website, based on the reference photo of the user. Preserve recognizable facial structure, warm medium skin tone, swept thick dark hair, short beard and brown eyes. Friendly slight smile, wearing a plain black hoodie. Waist-up centered portrait, head entirely visible and generously spaced from top, arms relaxed. High quality soft studio lighting, warm cream solid background #f4f1e8, no text, no props, no watermark. Large appealing head proportions, tactile fabric, refined modern 3D illustration. This is an identity reference, not a request to reproduce the suit.
