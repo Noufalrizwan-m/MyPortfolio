@@ -294,10 +294,10 @@ document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener('c
   const id=link.getAttribute('href').slice(1);
   if(!document.getElementById(id))return;
   event.preventDefault();
-  history.pushState(null,'','#'+id);
+  history.pushState({...history.state,portfolioChapter:id},'',location.pathname+location.search);
   goToChapter(id,'instant');
 }));
-window.addEventListener('popstate',()=>goToChapter(location.hash.slice(1)||'home'));
+window.addEventListener('popstate',event=>goToChapter(event.state?.portfolioChapter||'home'));
 function currentChapter(){
   const y=scrollY;
   if(document.querySelector('#contact').getBoundingClientRect().top<innerHeight*.45)return 'contact';
@@ -335,7 +335,7 @@ window.addEventListener('resize',()=>{
 });
 const poseImages=[...document.querySelectorAll('.avatar-poses img')];
 Promise.all(poseImages.map(image=>image.decode())).then(()=>{
-  assetsReady=true;setupMotion();if(location.hash)goToChapter(location.hash.slice(1));
+  assetsReady=true;setupMotion();goToChapter(history.state?.portfolioChapter||'home');
 }).catch(()=>{
   // Keep the whole résumé in document flow if any character pose is unavailable.
   poseImages.forEach(image=>{if(!image.complete||!image.naturalWidth)image.style.display='none'});

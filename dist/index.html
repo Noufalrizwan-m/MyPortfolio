@@ -1,15 +1,17 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f4f1e8"><meta name="description" content="Noufal is a front-end developer in Dubai building responsive websites with React, Tailwind CSS and GSAP."><title>Noufal Rizwan — Front-End Developer</title><link rel="icon" href="/favicon.ico?v=1" sizes="any"><link rel="icon" href="/favicon.svg?v=1" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1"><script>
-// A refresh starts at Home; ordinary section links and browser history still work.
+// Keep section navigation out of the address bar; refreshing starts at Home.
 (()=>{
- if(performance.getEntriesByType('navigation')[0]?.type!=='reload')return;
+ const reloaded=performance.getEntriesByType('navigation')[0]?.type==='reload';
+ const chapter=reloaded?'home':location.hash.slice(1)||'home';
+ history.replaceState({...history.state,portfolioChapter:chapter},'',location.pathname+location.search);
+ if(!reloaded)return;
  history.scrollRestoration='manual';
- history.replaceState(history.state,'',location.pathname+location.search+'#home');
  const resetScroll=()=>window.scrollTo({top:0,left:0,behavior:'instant'});
  resetScroll();
  window.addEventListener('pageshow',resetScroll,{once:true});
 })();
-</script><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="story.css?v=11"><link rel="stylesheet" href="reference.css?v=32"><script defer src="assets/gsap.min.js"></script><script defer src="assets/ScrollTrigger.min.js"></script><script defer src="assets/motion.js"></script><script defer src="app.js?v=31"></script><script type="module" src="contact.js?v=27"></script></head>
+</script><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="story.css?v=11"><link rel="stylesheet" href="reference.css?v=32"><script defer src="assets/gsap.min.js"></script><script defer src="assets/ScrollTrigger.min.js"></script><script defer src="assets/motion.js"></script><script defer src="app.js?v=32"></script><script type="module" src="contact.js?v=27"></script></head>
 <body><a class="skip" href="#main">Skip to content</a><div class="progress" aria-hidden="true"></div>
 <header><a class="wordmark" href="#home" aria-label="Noufal home"><span class="brand-mark">NR</span><span class="brand-name">Noufal Rizwan</span></a><nav aria-label="Chapter navigation"><a href="#work">Work</a><a href="#about">About</a><a href="#journey">Experience</a><a href="#contact">Contact</a></nav><a class="nav-contact" href="#contact">Let’s talk <span>↗</span></a></header>
 <main id="main"><section class="story" id="home" aria-label="Introduction and flying résumé story">
