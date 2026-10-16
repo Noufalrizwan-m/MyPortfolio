@@ -5,7 +5,7 @@ Run `sh dev.sh` from this folder to start the complete site at http://localhost:
 ## Scroll story
 
 - The introduction pins for two viewport heights on desktop and 1.65 on phones.
-- A separate hand/forearm layer provides one smooth greeting wave while the head and torso remain still; a matching holding pose introduces the résumé. The alternative wave image is retained as an asset.
+- A separate hand/forearm layer provides one smooth greeting wave while the head and torso remain still; a matching holding pose introduces the Resume. The alternative wave image is retained as an asset.
 - The Resumesheet leaves the hand, follows two joined cubic curves through one gentle loop, turns toward the viewer, and scales beyond all four screen edges. About text appears only after full coverage.
 - The desktop work timeline pins for two viewport heights, showing Aquaconnect, Panchathan Logistics, and Intronsoft from latest to earliest. Education follows separately.
 - Desktop projects pin for three viewport heights. Phones and tablets below 900px use a swipeable gallery with previous/next controls and a five-project counter.
@@ -14,7 +14,7 @@ Run `sh dev.sh` from this folder to start the complete site at http://localhost:
 
 ## Editing
 
-`dist/index.html` contains résumé-based content and section order. `dist/app.js` contains project summaries, scroll timelines, navigation and motion controls. `dist/style.css` contains base styling; `dist/story.css` contains the v2 scenes and responsive chapter layouts.
+`dist/index.html` contains Resume-based content and section order. `dist/app.js` contains project summaries, scroll timelines, navigation and motion controls. `dist/style.css` contains base styling; `dist/story.css` contains the v2 scenes and responsive chapter layouts.
 
 Project covers are captured screenshots of the reviewed live websites (October 2026). Project chapters use corresponding brand colors: Dr.Grow Labs sage/green, Aquaconnect blue, Panchathan green/amber, Fish Choice warm cream/red, and VJoin lilac. Project buttons open contribution summaries and live links. Email and phone links open the visitor's mail/phone app; the original ResumePDF is downloadable.
 
@@ -75,4 +75,4 @@ Compact mobile redesign (October 16): project arrows are replaced by five labell
 
 Refresh behavior: an early navigation check detects browser reloads, disables scroll restoration for that reload, replaces the section hash with `#home`, and resets scroll before rendering and on pageshow. Fresh section links and in-page navigation are preserved. Verified refresh from Work and Contact returns to scroll position 0 on mobile and desktop.
 
-Alignment and qualifications update: work is latest-first in both DOM order and desktop year navigation (Aquaconnect, Panchathan Logistics, Intronsoft), and the latest card opens by default on mobile. The timeline derives segment sizes from its item count. Education is separate, with MBA in Human Resource Management, Madurai Kamaraj University (2025), and B.Tech in Information Technology, K.L.N. College of Engineering (2022, CGPA 8.15). MBA details were verified against the owner’s supplied HR résumé; that file is not published as an asset. Phone toolkit groups now use a compact label/value list with no browser list indent; tablet/desktop cards keep aligned headers. Stats use fixed value/label rows so wrapped labels cannot shift the numbers. The send label and arrow are centered as a group. Checked 320px and 390px containment, desktop ordering and year selection, education rendering, and stat row alignment.
+Alignment and qualifications update: work is latest-first in both DOM order and desktop year navigation (Aquaconnect, Panchathan Logistics, Intronsoft), and the latest card opens by default on mobile. The timeline derives segment sizes from its item count. Education is separate, with MBA in Human Resource Management, Madurai Kamaraj University (2025), and B.Tech in Information Technology, K.L.N. College of Engineering (2022, CGPA 8.15). MBA details were verified against the owner’s supplied HR Resume; that file is not published as an asset. Phone toolkit groups now use a compact label/value list with no browser list indent; tablet/desktop cards keep aligned headers. Stats use fixed value/label rows so wrapped labels cannot shift the numbers. The send label and arrow are centered as a group. Checked 320px and 390px containment, desktop ordering and year selection, education rendering, and stat row alignment.
