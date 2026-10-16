@@ -249,3 +249,134 @@ header .wordmark .brand-mark{position:static;font-size:14px;vertical-align:basel
 .contact-form #contact-status[data-state=success]{color:#235537;background:#edf8f0;border:1px solid #bedbc5}
 @media(max-width:700px){.contact-form h3{font-size:24px}.contact-form .form-row{grid-template-columns:1fr;gap:0}.contact-form .form-footer{align-items:flex-start}.contact-form .form-footer .button{width:100%}}
 @media(min-width:701px) and (max-width:900px){.contact-layout{grid-template-columns:minmax(0,1fr);max-width:640px;gap:40px}.contact-form .form-footer .button{min-width:165px}}
+/* Disclosure headings keep the desktop cards unchanged. */
+.compact-card-toggle{display:block;width:100%;padding:0;text-align:left;font:inherit;letter-spacing:inherit;line-height:inherit;color:inherit;background:none;opacity:1;cursor:default}
+.compact-card-body[hidden]{display:none!important}
+@media(max-width:899px){
+ .section{padding:42px 6%}
+ .section h2,.journey .section-head h2,.toolkit-heading h2{font-size:30px;line-height:1.13;letter-spacing:-1px}
+ .section-head{display:block;margin-bottom:24px;gap:14px}
+ .section-head p,.journey .section-head>p{font-size:14px;line-height:1.6;margin-top:12px;max-width:440px}
+ .eyebrow{font-size:10px;letter-spacing:1.5px}
+ /* Short, unpinned introduction followed by a normal About section. */
+ .story{padding-top:68px;overflow:clip}
+ .story-greeting{display:flex;flex-direction:column;min-height:0;height:auto;padding:26px 6% 30px}
+ .story-copy{width:100%;padding:0;max-width:none}
+ .story-copy h1{font-size:clamp(34px,8.8vw,48px);line-height:1.1;letter-spacing:-1.5px}
+ .story-copy .availability{font-size:10px;line-height:1.5;margin-bottom:19px;padding:7px 10px}
+ .story-copy .hero-description{font-size:14px;line-height:1.65;margin:22px 0 18px;max-width:490px}
+ .hero-actions{gap:9px;flex-wrap:wrap}.hero-actions .button,.story-copy .hero-actions .button{min-height:44px;font-size:12px;padding:12px 15px;gap:8px}
+ .hero-socials{margin-top:14px;gap:10px}.hero-location{font-size:11px}
+ .story-avatar{position:relative;left:auto;right:auto;top:auto;bottom:auto;width:190px;height:245px;max-height:none;margin:16px auto 0;flex-shrink:0}
+ .avatar-note{right:-54px;top:12%;max-width:145px;padding:9px 11px}.avatar-note strong{font-size:12px}.avatar-note>span{font-size:10px}
+ .hero-floats .floating-orb{top:auto;bottom:110px;right:12%;width:40px;height:55px}
+ .hero-floats .floating-spark{top:auto;bottom:180px;left:15%;font-size:22px}
+ .hero-floats .floating-code{bottom:60px;left:10%;right:auto;font-size:11px}
+ .story-footer{display:none}
+ .paper-about{position:relative;min-height:0;display:block;padding:32px 6%;border-top:1px solid var(--line);background:#f3f1eb}
+ .paper-about .about-label{margin-bottom:14px}.paper-about h2{font-size:29px;line-height:1.12;letter-spacing:-1px}
+ .paper-about .about-statement{font-size:20px;line-height:1.5;font-weight:500;margin-top:20px;letter-spacing:-.4px}
+ .paper-about .text-link{font-size:13px;margin-top:18px}
+ .profile-section{padding-top:30px;padding-bottom:30px}.profile-layout{grid-template-columns:1fr;gap:22px}
+ .bio-copy p{font-size:14px;line-height:1.65;margin-bottom:16px}.profile-card{padding:20px;border-radius:20px;box-shadow:none}
+ .profile-name .brand-mark{width:46px;height:46px;font-size:18px;border-radius:14px}.profile-name{gap:12px}.profile-name h3{font-size:19px}.profile-name p{font-size:13px}
+ .profile-card dl{margin-top:18px}.profile-card dl>div{padding:12px 0;font-size:12px}.profile-links{margin-top:18px}
+ .reference-stats{margin-top:24px;border-radius:18px;grid-template-columns:1fr 1fr}
+ .reference-stats>div{padding:16px;gap:7px;min-height:100px}.reference-stats dd{font-size:30px}.reference-stats dd.stat-text{font-size:26px}.reference-stats dt{font-size:11px;line-height:1.45}
+ .tech-marquee{padding:14px 0}.marquee-track span{font-size:14px;gap:18px;padding-right:18px}
+ #work{padding:40px 6% 28px}.mobile-work-heading{margin-bottom:22px}.mobile-work-heading h2{font-size:30px;margin-top:12px}.mobile-work-heading p{margin-top:12px;font-size:13px}
+ #work .project-grid{gap:14px;padding-bottom:6px}
+ #work .project{flex-basis:min(94%,440px)}#work .project-art{aspect-ratio:1.7;padding:18px 14px}
+ #work .project-info{margin-top:15px;margin-bottom:12px}#work .project-info h3{font-size:23px}#work .project-info p{font-size:14px;line-height:1.6;margin-top:8px}
+ #work .project .tags{padding-top:0}#work .project .tags span{font-size:10px;padding:5px 8px}
+ .mobile-work-controls{position:relative;margin-top:10px;min-height:44px;gap:0}
+ .project-pagination{display:flex;align-items:center;justify-content:center;gap:0;font-size:0}
+ .project-pagination button{display:grid;place-items:center;width:44px;height:44px;background:transparent;border:0;border-radius:50%;padding:0;cursor:pointer}
+ .project-pagination button span{width:7px;height:7px;border-radius:10px;background:#c9c7c1;transition:width .25s,background .25s}
+ .project-pagination button[aria-current] span{width:25px;background:var(--brand)}
+ .project-pagination button:focus-visible{outline:2px solid var(--brand);outline-offset:-3px}
+ .mobile-project-count{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ /* One service and one experience can expand at a time. */
+ .service-grid{grid-template-columns:1fr;gap:12px;margin-top:24px}
+ .service-card{height:auto;display:grid;grid-template-columns:38px minmax(0,1fr);gap:0 13px;padding:18px;border-radius:18px;box-shadow:none}
+ .service-top{display:contents}.service-top>span:last-child{display:none}.service-icon{grid-column:1;grid-row:1;width:38px;height:38px;font-size:20px;border-radius:12px}
+ .service-card h3{grid-column:2;grid-row:1;margin:0;font-size:18px;letter-spacing:-.4px}
+ .compact-card-toggle{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:38px;cursor:pointer}
+ .compact-card-toggle:after{content:'+';font-family:Arial,sans-serif;font-size:22px;font-weight:400;color:var(--brand);flex-shrink:0}
+ .compact-card-toggle[aria-expanded=true]:after{content:'−'}
+ .compact-card-body{grid-column:1/-1}
+ .service-card p{font-size:14px;line-height:1.65;margin-top:14px}.service-card ul{margin-top:14px;padding-top:12px}.service-card li{font-size:13px;margin-top:7px;padding-left:20px}
+ .toolkit{grid-template-columns:1fr;gap:24px}.toolkit-heading{position:static}.toolkit-heading h2{margin-top:14px}.toolkit-heading p{font-size:14px;line-height:1.6;margin-top:12px}
+ .toolkit-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tool-card{padding:14px;border-radius:15px}.tool-card h3{font-size:13px;gap:8px;line-height:1.35}.tool-card h3>span{width:26px;height:26px;font-size:11px;border-radius:9px}
+ .tool-card ul{margin-top:12px;gap:5px}.tool-card li{font-size:10px;line-height:1.4;padding:5px 7px}
+ .journey .section-head{margin-bottom:24px}.journey .section-head h2{margin-top:12px}
+ .journey .journey-cards .milestone{grid-template-columns:1fr;gap:7px;padding:18px;border-radius:18px;margin-bottom:12px}
+ .experience-period{padding:0!important;gap:6px 12px;border:0;flex-direction:row;align-items:center}
+ .experience-year{flex:none;font-size:18px;letter-spacing:-.5px}.journey .milestone .time{font-size:11px}.experience-kind{display:none}
+ .journey .milestone h3{font-size:21px;line-height:1.2;letter-spacing:-.6px;margin:0 0 2px}.journey .milestone .job-type{font-size:13px;line-height:1.5}
+ .experience-highlights{margin:16px 0;gap:9px}.experience-highlights li{font-size:14px;line-height:1.6;padding-left:15px}
+ .experience-meta{padding-top:12px;gap:10px}.experience-meta .tags span{font-size:10px;padding:5px 8px}.journey .milestone .location{font-size:12px}
+ .contact-layout{grid-template-columns:1fr;gap:28px;max-width:640px}
+ .reference-contact h2{font-size:34px;line-height:1.1;margin-top:16px}.contact-intro{font-size:14px;line-height:1.65;margin-top:16px}
+ .contact-details{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;margin-top:24px}.contact-details>div{margin:0}.contact-details>div:first-child{grid-column:1/-1}.contact-details dt{font-size:11px;margin-bottom:4px}.contact-details dd{font-size:13px;line-height:1.5}
+ .reference-contact .text-link{margin-top:20px;font-size:13px}
+ .contact-form{padding:22px;border-radius:20px}.contact-form h3{font-size:23px;line-height:1.25;margin-bottom:0}.contact-form .form-description{font-size:13px;line-height:1.6;margin:12px 0 22px}
+ .contact-form .form-field{margin-bottom:18px}.contact-form .form-field label{font-size:13px;margin-bottom:5px}.contact-form input:not([type=radio]),.contact-form textarea{margin-top:3px;padding:11px 12px}
+ .contact-form textarea{min-height:120px}.contact-form fieldset{margin-bottom:20px}.contact-form legend{font-size:13px}.contact-form .topic-options span{font-size:11px;min-height:38px;padding:8px 11px}.contact-form .form-footer p{font-size:11px}
+ footer{padding:25px 6%;gap:16px;flex-wrap:wrap}footer .wordmark{font-size:32px}footer>span{font-size:10px}footer>a:last-child{font-size:10px}
+}
+@media(max-width:360px){.story-copy h1{font-size:32px}.story-copy .hero-description{font-size:13px}.story-avatar{height:220px;width:170px}.avatar-note{right:-48px;max-width:130px}.toolkit-grid{grid-template-columns:1fr 1fr}.tool-card{padding:11px}.tool-card h3{font-size:12px;gap:6px}.tool-card h3>span{display:none}.project-pagination button{width:42px}}
+@media(prefers-reduced-motion:reduce){.project-pagination button span{transition:none}}
+@media(max-width:899px){.mobile-work-controls .project-pagination button:hover{background:transparent;color:inherit}.avatar-note{right:-80px;top:3%;max-width:120px;padding:8px 10px}.avatar-note strong{font-size:11px}.avatar-note>span{font-size:9px}}
+@media(max-width:360px){.avatar-note{right:-50px;max-width:106px}}
+@media(max-width:899px){.tool-card ul{display:block;font-size:12px;line-height:1.7}.tool-card li{display:inline;border:0;background:transparent;padding:0;font-size:12px;line-height:1.7}.tool-card li:not(:last-child):after{content:' · ';color:#96958e}.tool-card h3{min-height:32px}}
+@media(min-width:701px) and (max-width:899px){.story{padding-top:76px}}
+@media(max-width:360px){.hero-actions{gap:8px}.story-copy .hero-actions .button{flex:1 1 0;min-width:0;font-size:11px;padding:10px 8px;gap:5px}.hero-actions svg{width:16px;height:16px}}
+/* Center both rows of each statistic; reset the browser's default dd indent. */
+.reference-stats>div{align-items:center;justify-content:center;text-align:center}
+.reference-stats dt,.reference-stats dd{width:100%;margin:0;text-align:center}
+.reference-stats dd{min-height:52px;display:flex;align-items:center;justify-content:center;line-height:1.1}
+.reference-stats dt{min-height:36px;display:flex;align-items:center;justify-content:center}
+@media(max-width:899px){.reference-stats dd{min-height:36px}.reference-stats dt{min-height:32px}.reference-stats>div:nth-child(2n){border-right:0}.reference-stats>div:nth-last-child(-n+2){border-bottom:0}}
+/* Align each stat to shared value and label rows, even when labels wrap. */
+.reference-stats>div{display:grid;grid-template-rows:52px 36px;gap:12px;align-content:center;justify-items:center}
+.reference-stats dd{grid-row:1;min-height:0;height:100%;align-self:stretch}
+.reference-stats dt{grid-row:2;min-height:0;height:100%;align-self:stretch}
+/* Lists must not retain the browser's default 40px indentation. */
+.tool-card ul{padding:0;margin-inline:0;text-align:left}
+.contact-form .form-footer .button{justify-content:center;text-align:center;gap:12px}
+.education-section{padding-top:25px;padding-bottom:65px;background:var(--paper)}
+.education-heading{max-width:1120px;margin:0 auto 24px}.education-heading h2{font-size:28px;letter-spacing:-.8px;margin-top:12px}
+.education-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:1120px;margin:auto}
+.education-card{display:flex;align-items:start;gap:20px;padding:25px;border:1px solid var(--line);border-radius:20px;background:white}
+.education-year{font-size:14px;font-weight:600;color:var(--brand);line-height:1.7;flex-shrink:0}
+.education-card h3{font-size:18px;line-height:1.4;letter-spacing:-.4px}.education-card p{font-size:13px;line-height:1.6;color:var(--muted);margin-top:7px}.education-card p span{white-space:nowrap}
+@media(max-width:899px){
+ .journey .section-head{text-align:center}.journey .section-head>p{margin-inline:auto}
+ .reference-stats>div{grid-template-rows:40px 48px;gap:8px;padding:16px}
+ .toolkit-grid{align-items:stretch;gap:12px}.tool-card{padding:16px;display:flex;flex-direction:column}
+ .tool-card h3{min-height:44px;align-items:center;font-size:13px;line-height:1.35;gap:9px}
+ .tool-card h3>span{display:grid;flex-shrink:0;align-self:center}
+ .tool-card ul{margin:14px 0 0;line-height:1.65}
+ .tool-card li{font-size:12px;line-height:1.65}
+ .education-section{padding-top:12px;padding-bottom:40px}.education-heading{text-align:center;margin-bottom:20px}.education-heading h2{font-size:24px}
+ .education-grid{grid-template-columns:1fr;gap:12px}.education-card{padding:20px;gap:16px;border-radius:18px}.education-card h3{font-size:17px}.education-card p{font-size:13px}
+}
+@media(max-width:700px){
+ .contact-form .form-footer{display:flex;flex-direction:column;align-items:stretch;gap:14px}
+ .contact-form .form-footer p{max-width:none;width:100%;text-align:center}
+ .contact-form .form-footer .button{width:100%;margin-top:0;justify-content:center;gap:12px}
+}
+@media(max-width:360px){.tool-card{padding:12px}.tool-card h3{font-size:12px;gap:7px}.tool-card h3>span{width:23px;height:23px}.tool-card li{font-size:11px}}
+/* On phones, a tidy label/value list avoids uneven boxes and empty card space. */
+@media(max-width:600px){
+ .toolkit-grid{display:block;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:white}
+ .tool-card{display:grid;grid-template-columns:114px minmax(0,1fr);align-items:center;gap:16px;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:18px;background:transparent}
+ .tool-card:last-child{border-bottom:0}.tool-card h3{min-height:0;font-size:13px;gap:8px;align-items:center}
+ .tool-card h3>span{width:26px;height:26px;align-self:center}.tool-card ul{margin:0;font-size:13px;line-height:1.65}.tool-card li{font-size:13px;line-height:1.65}
+}
+@media(max-width:360px){.tool-card{grid-template-columns:100px minmax(0,1fr);gap:12px;padding:16px 14px}.tool-card h3{font-size:12px;gap:7px}.tool-card h3>span{width:23px;height:23px}.tool-card li{font-size:12px}}
+/* The legacy wordmark span rule must not indent or pad the header badge. */
+header .wordmark .brand-mark{display:grid;place-items:center;margin:0;padding:0;text-align:center;line-height:1;vertical-align:baseline}
+header .wordmark .brand-name{margin:0;padding:0;line-height:1.2;vertical-align:baseline}
+@media(max-width:700px){header .wordmark .brand-mark{font-size:12px}}

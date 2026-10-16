@@ -43,8 +43,46 @@ function restoreDocument() {
   beat.textContent = beatNames[0];
 }
 
+// Compact disclosures preserve every detail without long mobile card stacks.
+let compactDisclosureMode;
+const mobileDisclosures=[];
+function syncMobileDisclosures(){
+  const compact=innerWidth<900;
+  if(!mobileDisclosures.length){
+    const groups=[['service',[...document.querySelectorAll('.service-card')]],['experience',milestones]];
+    groups.forEach(([group,cards])=>cards.forEach((card,index)=>{
+      const heading=card.querySelector('h3');
+      const panel=document.createElement('div');panel.className='compact-card-body';panel.id=`${group}-details-${index}`;
+      const nodes=group==='service'?[card.querySelector('p'),card.querySelector('ul')]:[card.querySelector('.experience-highlights'),card.querySelector('.experience-meta')];
+      nodes.filter(Boolean).forEach(node=>panel.append(node));
+      (group==='service'?card:card.querySelector('.experience-content')).append(panel);
+      const button=document.createElement('button');button.type='button';button.className='compact-card-toggle';button.textContent=heading.textContent;button.setAttribute('aria-label',heading.textContent);button.setAttribute('aria-controls',panel.id);heading.replaceChildren(button);
+      const item={group,index,button,panel,card};mobileDisclosures.push(item);
+      button.addEventListener('click',()=>{
+        if(innerWidth>=900)return;
+        const open=button.getAttribute('aria-expanded')!=='true';
+        mobileDisclosures.filter(other=>other.group===group).forEach(other=>setDisclosure(other,other===item&&open));
+        if(open&&!motionOff&&window.gsap)gsap.fromTo(panel,{opacity:0,y:8},{opacity:1,y:0,duration:.3,clearProps:'opacity,transform'});
+        window.ScrollTrigger?.refresh();
+      });
+    }));
+  }
+  if(compactDisclosureMode===compact)return;
+  compactDisclosureMode=compact;
+  mobileDisclosures.forEach(item=>{
+    item.button.disabled=!compact;
+    setDisclosure(item,!compact||(item.group==='service'?item.index===0:item.index===0));
+  });
+}
+function setDisclosure(item,open){
+  item.button.setAttribute('aria-expanded',String(open));
+  item.panel.hidden=!open;
+  item.card.classList.toggle('compact-card-open',open);
+}
+
 function setupMotion() {
   restoreDocument();
+  syncMobileDisclosures();
   document.documentElement.classList.toggle('motion-off', motionOff);
   if (motionOff || !assetsReady || !window.gsap || !window.ScrollTrigger || innerHeight < 620) return;
   const mobile = innerWidth <= 700;
@@ -52,6 +90,22 @@ function setupMotion() {
   const pinJourney = innerWidth >= 900 && innerHeight >= 720;
   const w = innerWidth, h = innerHeight;
   gsap.registerPlugin(ScrollTrigger);
+  // Phones and tablets scroll naturally: no pinned scenes or artificial scroll distance.
+  if(innerWidth<900){
+    animationContext=gsap.context(()=>{
+      gsap.from('.story-copy',{y:16,autoAlpha:0,duration:.55,ease:'power2.out'});
+      gsap.from('.story-avatar',{y:20,autoAlpha:0,duration:.65,delay:.1,ease:'power2.out'});
+      gsap.to('.wave-arm',{rotation:7,duration:.3,repeat:3,yoyo:true,ease:'sine.inOut'});
+      const reveals='#about .about-copy,.profile-section .reveal,.services .reveal,.toolkit .reveal,.milestone.reveal,.contact .reveal';
+      gsap.utils.toArray(reveals).forEach((element,index)=>gsap.from(element,{
+        y:18,autoAlpha:0,duration:.45,ease:'power2.out',
+        scrollTrigger:{trigger:element,start:'top 97%',once:true}
+      }));
+      gsap.to('.progress',{width:'100%',ease:'none',scrollTrigger:{trigger:document.body,start:'top top',end:'bottom bottom',scrub:true}});
+    });
+    ScrollTrigger.refresh();
+    return;
+  }
   story.classList.add('story-active');
   if(pinJourney) document.querySelector('#journey').classList.add('journey-pinned');
   if (horizontal) document.querySelector('#work').classList.add('work-pinned');
@@ -141,7 +195,7 @@ function setupMotion() {
     const journey = gsap.timeline({defaults:{ease:'none'},scrollTrigger:{
       id:'journey-chapter',refreshPriority:1,trigger:'#journey',start:'top top',end:()=>'+='+innerHeight*2,
       pin:true,scrub:.25,anticipatePin:1,onUpdate(self){
-        const index=Math.min(3,Math.floor(self.progress*4));
+        const index=Math.min(milestones.length-1,Math.floor(self.progress*milestones.length));
         milestones.forEach((el,i)=>el.inert=i!==index);
         milestoneLabels.forEach((el,i)=>i===index?el.setAttribute('aria-current','step'):el.removeAttribute('aria-current'));
       }
@@ -149,8 +203,8 @@ function setupMotion() {
     journeyTrigger=journey.scrollTrigger;
     journey.to({}, {duration:100},0).to('.journey-line',{scaleX:1,duration:100},0);
     milestones.forEach((el,i)=>{
-      if(i)journey.to(el,{autoAlpha:1,y:0,duration:5},i*25-3);
-      if(i<3)journey.to(el,{autoAlpha:0,y:-18,duration:4},(i+1)*25-5);
+      if(i)journey.to(el,{autoAlpha:1,y:0,duration:5},i*(100/milestones.length)-3);
+      if(i<milestones.length-1)journey.to(el,{autoAlpha:0,y:-18,duration:4},(i+1)*(100/milestones.length)-5);
       el.inert=i!==0;
     });
     milestoneLabels[0].setAttribute('aria-current','step');
@@ -299,8 +353,8 @@ milestoneLabels.forEach((button,index)=>button.addEventListener('click',()=>{
 
 // Native mobile swiping keeps the full project list within one short section.
 const mobileProjectTrack=document.querySelector('.project-grid');
-const previousProject=document.querySelector('[data-project-step="-1"]');
-const nextProject=document.querySelector('[data-project-step="1"]');
+const projectPageButtons=[...document.querySelectorAll('[data-project-page]')];
+projectPanels.forEach((panel,index)=>panel.id=`project-card-${index}`);
 const mobileProjectCount=document.querySelector('.mobile-project-count');
 let mobileProjectIndex=0,projectScrollFrame,projectNavigationTimer;
 let projectNavigationTarget=null;
@@ -310,8 +364,7 @@ function updateMobileProjects(){
   const distances=projectPanels.map(panel=>Math.abs(panel.getBoundingClientRect().left-trackLeft));
   mobileProjectIndex=projectNavigationTarget??distances.indexOf(Math.min(...distances));
   mobileProjectCount.textContent=`${String(mobileProjectIndex+1).padStart(2,'0')} / ${String(projectPanels.length).padStart(2,'0')}`;
-  previousProject.disabled=mobileProjectIndex===0;
-  nextProject.disabled=mobileProjectIndex===projectPanels.length-1;
+  projectPageButtons.forEach((button,index)=>index===mobileProjectIndex?button.setAttribute('aria-current','true'):button.removeAttribute('aria-current'));
 }
 mobileProjectTrack.addEventListener('scroll',()=>{
   cancelAnimationFrame(projectScrollFrame);projectScrollFrame=requestAnimationFrame(updateMobileProjects);
@@ -339,8 +392,8 @@ new IntersectionObserver(entries=>{
   projectVisible=entries[0].isIntersecting&&entries[0].intersectionRatio>=.6;
   scheduleProjectAutoplay();
 },{threshold:[0,.6]}).observe(mobileProjectTrack);
-document.querySelectorAll('[data-project-step]').forEach(button=>button.addEventListener('click',()=>{
-  navigateMobileProject(Math.max(0,Math.min(projectPanels.length-1,mobileProjectIndex+Number(button.dataset.projectStep))));
+projectPageButtons.forEach(button=>button.addEventListener('click',()=>{
+  navigateMobileProject(Number(button.dataset.projectPage));
   scheduleProjectAutoplay(8000);
 }));
 mobileWork.addEventListener('pointerdown',()=>{
