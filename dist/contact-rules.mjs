@@ -13,7 +13,7 @@ export function contactError(name,data){
  if(name==='email')return !value?'Please enter your email address.':value.length>254||!/^([^\s@<>]+)@([^\s@<>.]+)(?:\.[^\s@<>.]+)+$/.test(value)?'Please enter a valid email, such as you@example.com.':'';
  if(name==='company')return value.length>120?'Please keep the company name to 120 characters.':'';
  if(name==='topic')return CONTACT_TOPICS.includes(value)?'':'Please choose a topic.';
- if(name==='message')return !value?'Please write a short message.':value.length<20?'Please add a little more detail—at least 20 characters.':value.length>5000?'Please keep your message to 5,000 characters.':'';
+ if(name==='message')return !value?'Please write a short message.':value.length<20?'Please add a little more detail-at least 20 characters.':value.length>5000?'Please keep your message to 5,000 characters.':'';
  return '';
 }
 export function contactErrors(data){

@@ -42,7 +42,7 @@ import { CONTACT_FIELDS, normalizeContact, contactError } from './contact-rules.
   }
   summary.hidden=true;sending=true;form.setAttribute('aria-busy','true');button.disabled=true;button.textContent='Sending…';
   showStatus('Sending your message…','sending');
-  data._subject=`Portfolio enquiry: ${data.topic} — ${data.name.replace(/[\r\n]+/g,' ')}`;
+  data._subject=`Portfolio enquiry: ${data.topic} - ${data.name.replace(/[\r\n]+/g,' ')}`;
   try{
    const validation=await fetch('/api/contact',{
     method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(data),signal:AbortSignal.timeout(10000)
@@ -50,7 +50,7 @@ import { CONTACT_FIELDS, normalizeContact, contactError } from './contact-rules.
    const checked=await validation.json();
    if(checked.ignored)return;
    if(!validation.ok||!checked.valid)throw new Error('The form could not be validated');
-   const fields={...checked.fields,_subject:`Portfolio enquiry: ${checked.fields.topic} — ${checked.fields.name}`,_template:'table'};
+   const fields={...checked.fields,_subject:`Portfolio enquiry: ${checked.fields.topic} - ${checked.fields.name}`,_template:'table'};
    const response=await fetch(form.action.replace('formsubmit.co/','formsubmit.co/ajax/'),{
     method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(fields),signal:AbortSignal.timeout(20000)
    });
@@ -62,7 +62,7 @@ import { CONTACT_FIELDS, normalizeContact, contactError } from './contact-rules.
     throw new Error('Submission was not accepted');
    }
    form.reset();counter();showStatus('Thank you! Your message has been submitted. I’ll get back to you soon.','success');
-  }catch(error){showStatus('Your message could not be sent. Your details are still here—please try again, or email noufalrizwanuae@gmail.com.','error');}
+  }catch(error){showStatus('Your message could not be sent. Your details are still here-please try again, or email noufalrizwanuae@gmail.com.','error');}
   finally{sending=false;form.removeAttribute('aria-busy');button.disabled=false;button.innerHTML='Send message <span aria-hidden="true">↗</span>';}
  });
 })();

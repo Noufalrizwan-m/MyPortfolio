@@ -337,7 +337,7 @@ const poseImages=[...document.querySelectorAll('.avatar-poses img')];
 Promise.all(poseImages.map(image=>image.decode())).then(()=>{
   assetsReady=true;setupMotion();goToChapter(history.state?.portfolioChapter||'home');
 }).catch(()=>{
-  // Keep the whole résumé in document flow if any character pose is unavailable.
+  // Keep the whole Resumein document flow if any character pose is unavailable.
   poseImages.forEach(image=>{if(!image.complete||!image.naturalWidth)image.style.display='none'});
   restoreDocument();
 });
