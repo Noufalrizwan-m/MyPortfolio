@@ -8,6 +8,7 @@ let animationContext;
 let hoverCleanups = [];
 let introTrigger, journeyTrigger, workTrigger;
 let assetsReady = false;
+let mobileStoryStage;
 const story = document.querySelector('.story');
 const about = document.querySelector('#about');
 const greeting = document.querySelector('.story-greeting');
@@ -30,6 +31,13 @@ statement.replaceChildren(...statement.textContent.split(' ').map(word => {
 function restoreDocument() {
   if (animationContext) animationContext.revert();
   animationContext = null;
+  if(mobileStoryStage){
+    const avatar=mobileStoryStage.querySelector('.story-avatar');
+    mobileStoryStage.before(avatar);
+    greeting.after(mobileStoryStage.querySelector('.flying-paper'),about);
+    mobileStoryStage.remove();mobileStoryStage=null;
+  }
+  story.classList.remove('mobile-story');
   document.querySelectorAll('[data-count]').forEach(el=>el.textContent=el.dataset.count);
   hoverCleanups.forEach(cleanup => cleanup());
   hoverCleanups = [];
@@ -90,13 +98,48 @@ function setupMotion() {
   const pinJourney = innerWidth >= 900 && innerHeight >= 720;
   const w = innerWidth, h = innerHeight;
   gsap.registerPlugin(ScrollTrigger);
-  // Phones and tablets scroll naturally: no pinned scenes or artificial scroll distance.
+  // A short mobile handoff keeps the résumé story without the desktop scroll length.
   if(innerWidth<900){
+    story.classList.add('mobile-story');
+    mobileStoryStage=document.createElement('div');
+    mobileStoryStage.className='mobile-story-stage';
+    const avatar=document.querySelector('.story-avatar');
+    avatar.before(mobileStoryStage);
+    mobileStoryStage.append(avatar,document.querySelector('.flying-paper'),about);
+    mobileStoryStage.style.width=Math.floor(mobileStoryStage.getBoundingClientRect().width)+'px';
+    mobileStoryStage.style.height=Math.max(360,about.querySelector('.about-label').offsetHeight+about.querySelector('.about-copy').offsetHeight+64)+'px';
     animationContext=gsap.context(()=>{
       gsap.from('.story-copy',{y:16,autoAlpha:0,duration:.55,ease:'power2.out'});
       gsap.from('.story-avatar',{y:20,autoAlpha:0,duration:.65,delay:.1,ease:'power2.out'});
       gsap.to('.wave-arm',{rotation:7,duration:.3,repeat:3,yoyo:true,ease:'sine.inOut'});
-      const reveals='#about .about-copy,.profile-section .reveal,.services .reveal,.toolkit .reveal,.milestone.reveal,.contact .reveal';
+      gsap.set('.flying-paper',{autoAlpha:0,xPercent:-50,yPercent:-50,x:-28,y:15,scale:.65,rotation:-12});
+      gsap.set('.avatar-hold,.paper-about',{autoAlpha:0});
+      gsap.set('.paper-about .about-copy',{y:20});
+      gsap.set('.about-statement span',{color:'#c7c7c2'});
+      about.inert=true;
+      const handoff=gsap.timeline({defaults:{ease:'sine.inOut'},scrollTrigger:{
+        id:'mobile-resume-story',trigger:mobileStoryStage,start:'center center+=34',
+        end:()=>'+='+Math.round(innerHeight*1.5),pin:true,pinSpacing:true,scrub:true,anticipatePin:1,
+        onUpdate:self=>{about.inert=self.progress<.65;},
+        onToggle:self=>mobileStoryStage?.classList.toggle('is-scene-pinned',self.isActive)
+      }});
+      handoff.to(mobileStoryStage,{'--scene-backdrop':1,duration:.15},0)
+        .to('.avatar-note,.hero-floats',{autoAlpha:0,duration:.15},0)
+        .to('.story-avatar',{x:0,y:(mobileStoryStage.offsetHeight-300)/2-24,duration:.18},0)
+        .to('.pose-a,.wave-arm',{autoAlpha:0,duration:.15},.16)
+        .to('.avatar-hold',{autoAlpha:1,duration:.15},.16)
+        .to('.flying-paper',{autoAlpha:1,duration:.1},.3)
+        .to('.flying-paper',{x:0,y:0,scale:1.25,rotation:0,duration:.3},.4)
+        .to('.story-avatar',{autoAlpha:0,duration:.2},.4)
+        .to('.flying-paper',{scale:Math.max(innerWidth/90,(innerHeight-68)/(90*841.8898/595.30398))*1.2,duration:.4},.85)
+        .to('.paper-ink,.paper-fold',{autoAlpha:0,duration:.18},1.05)
+        .to('.flying-paper',{autoAlpha:0,duration:.15},1.2)
+        .to('.paper-about',{autoAlpha:1,duration:.2},1.2)
+        .to('.paper-about .about-copy',{y:0,duration:.25},1.2);
+      handoff.to('.about-statement span',{color:'#20231e',duration:.08,stagger:{amount:.55},ease:'none'},1.4)
+        .to(mobileStoryStage,{'--scene-backdrop':0,duration:.2,ease:'none'},2.03)
+        .to({}, {duration:.08});
+      const reveals='.profile-section .reveal,.services .reveal,.toolkit .reveal,.milestone.reveal,.contact .reveal';
       gsap.utils.toArray(reveals).forEach((element,index)=>gsap.from(element,{
         y:18,autoAlpha:0,duration:.45,ease:'power2.out',
         scrollTrigger:{trigger:element,start:'top 97%',once:true}
@@ -278,6 +321,7 @@ function setupMotion() {
 }
 
 function chapterDestination(id){
+  if(id==='about'&&mobileStoryStage)return ScrollTrigger.getById('mobile-resume-story')?.end??null;
   if(id==='about'&&introTrigger)return introTrigger.end;
   if(id==='home'&&introTrigger)return introTrigger.start;
   if(id==='journey'&&journeyTrigger)return journeyTrigger.start;
