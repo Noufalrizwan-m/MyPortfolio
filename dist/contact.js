@@ -1,4 +1,4 @@
-import { CONTACT_FIELDS, normalizeContact, contactError } from './contact-rules.mjs';
+import { CONTACT_FIELDS, normalizeContact, contactError } from './contact-rules.mjs?v=2';
 // Native constraints remain available when JavaScript is disabled.
 (()=>{
  const form=document.querySelector('#contact-form');

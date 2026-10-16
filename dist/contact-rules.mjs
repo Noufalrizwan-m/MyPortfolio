@@ -1,5 +1,5 @@
 export const CONTACT_FIELDS=['name','email','company','topic','message'];
-export const CONTACT_TOPICS=['Job opportunity','Freelance project','Collaboration','Just saying hello'];
+export const CONTACT_TOPICS=['Website enquiry','Freelance project','Collaboration','Just saying hello'];
 export function normalizeContact(input={}){
  const data={};
  CONTACT_FIELDS.forEach(name=>data[name]=typeof input[name]==='string'?input[name].trim():'');
