@@ -98,6 +98,9 @@ function setupMotion() {
   const pinJourney = innerWidth >= 900 && innerHeight >= 720;
   const w = innerWidth, h = innerHeight;
   gsap.registerPlugin(ScrollTrigger);
+  // Our resize handler owns layout rebuilds. In-app browser toolbars must not
+  // refresh pinned scenes or send the reader to another chapter mid-scroll.
+  ScrollTrigger.config({ignoreMobileResize:true,autoRefreshEvents:'visibilitychange,DOMContentLoaded,load'});
   // A short mobile handoff keeps the résumé story without the desktop scroll length.
   if(innerWidth<900){
     story.classList.add('mobile-story');
@@ -119,7 +122,7 @@ function setupMotion() {
       about.inert=true;
       const handoff=gsap.timeline({defaults:{ease:'sine.inOut'},scrollTrigger:{
         id:'mobile-resume-story',trigger:mobileStoryStage,start:'center center+=34',
-        end:()=>'+='+Math.round(innerHeight*1.5),pin:true,pinSpacing:true,scrub:true,anticipatePin:1,
+        end:()=>'+='+Math.round(h*1.5),pin:true,pinSpacing:true,scrub:true,anticipatePin:1,
         onUpdate:self=>{about.inert=self.progress<.65;},
         onToggle:self=>mobileStoryStage?.classList.toggle('is-scene-pinned',self.isActive)
       }});
@@ -131,7 +134,7 @@ function setupMotion() {
         .to('.flying-paper',{autoAlpha:1,duration:.1},.3)
         .to('.flying-paper',{x:0,y:0,scale:1.25,rotation:0,duration:.3},.4)
         .to('.story-avatar',{autoAlpha:0,duration:.2},.4)
-        .to('.flying-paper',{scale:Math.max(innerWidth/90,(innerHeight-68)/(90*841.8898/595.30398))*1.2,duration:.4},.85)
+        .to('.flying-paper',{scale:Math.max(w/90,(h-68)/(90*841.8898/595.30398))*1.2,duration:.4},.85)
         .to('.paper-ink,.paper-fold',{autoAlpha:0,duration:.18},1.05)
         .to('.flying-paper',{autoAlpha:0,duration:.15},1.2)
         .to('.paper-about',{autoAlpha:1,duration:.2},1.2)
@@ -367,12 +370,14 @@ let resizeTimer,previousWidth=innerWidth,previousHeight=innerHeight;
 window.addEventListener('resize',()=>{
   clearTimeout(resizeTimer);
   resizeTimer=setTimeout(()=>{
-    if(innerWidth===previousWidth&&Math.abs(innerHeight-previousHeight)<85)return;
+    const sameWidth=innerWidth===previousWidth;
+    // Keyboard and collapsing browser chrome change height without changing layout.
+    if(sameWidth&&(innerWidth<900||Math.abs(innerHeight-previousHeight)<85))return;
     const id=currentChapter();
-    const trigger=id==='home'||id==='about'?introTrigger:id==='journey'?journeyTrigger:id==='work'?workTrigger:null;
+    const trigger=id==='home'||id==='about'?(introTrigger||window.ScrollTrigger?.getById('mobile-resume-story')):id==='journey'?journeyTrigger:id==='work'?workTrigger:null;
     const progress=trigger?.progress;
     previousWidth=innerWidth;previousHeight=innerHeight;setupMotion();
-    const next=id==='home'||id==='about'?introTrigger:id==='journey'?journeyTrigger:id==='work'?workTrigger:null;
+    const next=id==='home'||id==='about'?(introTrigger||window.ScrollTrigger?.getById('mobile-resume-story')):id==='journey'?journeyTrigger:id==='work'?workTrigger:null;
     if(next&&progress!==undefined)window.scrollTo({top:next.start+(next.end-next.start)*progress,behavior:'instant'});
     else goToChapter(id);
   },180);
