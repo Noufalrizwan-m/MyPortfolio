@@ -401,3 +401,11 @@ header .wordmark .brand-name{margin:0;padding:0;line-height:1.2;vertical-align:b
  .mobile-story-stage.is-scene-pinned{z-index:20}
  .mobile-story-stage.is-scene-pinned::before{content:"";position:absolute;width:100vw;height:100svh;left:calc(50% - 50vw);top:calc(50% - 50svh - 34px);background:var(--paper);opacity:var(--scene-backdrop);z-index:-1;pointer-events:none;will-change:opacity}
 }
+
+/* Keep the About reading block comfortable at phone and tablet widths. */
+@media(max-width:899px){
+ .paper-about h2{font-size:clamp(26px,7vw,32px);line-height:1.15;letter-spacing:-.8px;text-wrap:balance}
+ .paper-about .about-statement,.mobile-story-stage .paper-about .about-statement{font-size:clamp(16px,4.15vw,19px);font-weight:400;line-height:1.65;letter-spacing:0;margin:20px 0 0;overflow-wrap:break-word;text-wrap:pretty}
+ .paper-about .text-link{font-size:13px;margin-top:22px}
+ .mobile-story-stage .paper-about .about-label{margin-bottom:14px}
+}
