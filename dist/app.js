@@ -383,7 +383,7 @@ window.addEventListener('resize',()=>{
   },180);
 });
 const poseImages=[...document.querySelectorAll('.avatar-poses img')];
-Promise.all([...poseImages.map(image=>image.decode()),document.fonts?.ready]).then(()=>{
+window.portfolioHeroReady=Promise.all([...poseImages.map(image=>image.decode()),document.fonts?.ready,window.portfolioIntroReady]).then(()=>{
   assetsReady=true;setupMotion();goToChapter(history.state?.portfolioChapter||'home');
 }).catch(()=>{
   // Keep the whole Resumein document flow if any character pose is unavailable.
