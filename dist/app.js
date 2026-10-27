@@ -129,7 +129,7 @@ function setupMotion() {
       handoff.to(mobileStoryStage,{'--scene-backdrop':1,duration:.15},0)
         .to('.avatar-note,.hero-floats',{autoAlpha:0,duration:.15},0)
         .to('.story-avatar',{x:0,y:(mobileStoryStage.offsetHeight-300)/2-24,duration:.18},0)
-        .to('.pose-a,.wave-arm',{autoAlpha:0,duration:.15},.16)
+        .to('.pose-a,.wave-arm,.hero-gaze',{autoAlpha:0,duration:.15},.16)
         .to('.avatar-hold',{autoAlpha:1,duration:.15},.16)
         .to('.flying-paper',{autoAlpha:1,duration:.1},.3)
         .to('.flying-paper',{x:0,y:0,scale:1.25,rotation:0,duration:.3},.4)
@@ -197,7 +197,7 @@ function setupMotion() {
     intro.to('.story-avatar', {x:shiftX,rotation:mobile?1:2,scale:.96,duration:23,ease:'sine.inOut'},12)
       .to('.story-copy', {x:mobile?-10:-30,autoAlpha:0,duration:21},12)
       .to('.hero-floats,.avatar-note', {autoAlpha:0,duration:12},18)
-      .to('.pose-a,.wave-arm',{autoAlpha:0,duration:8},22)
+      .to('.pose-a,.wave-arm,.hero-gaze',{autoAlpha:0,duration:8},22)
       .to('.avatar-hold',{autoAlpha:1,duration:8},22)
       .fromTo('.flying-paper', {x:originX,y:originY,rotation:-12,rotationY:-14,scale:initialScale},
         {autoAlpha:1,duration:5},30);
@@ -289,13 +289,21 @@ function setupMotion() {
   if(matchMedia('(hover: hover) and (pointer: fine)').matches){
     document.querySelectorAll('[data-tilt],.avatar-poses').forEach(el=>{
       const isAvatar=el.classList.contains('avatar-poses');
-      const max=Number(el.dataset.tilt)||(isAvatar?7:4);
+      const max=Number(el.dataset.tilt)||(isAvatar?5:4);
+      const gaze=isAvatar?el.querySelector('.hero-gaze'):null;
       let x=.5,y=.5,tx=.5,ty=.5,vx=0,vy=0,frame=0,last=0;
       function render(now){
         const dt=Math.min((now-last)/1000||1/60,1/30);last=now;
-        vx+=(180*(tx-x)-18*vx)/.6*dt;vy+=(180*(ty-y)-18*vy)/.6*dt;
-        x+=vx*dt;y+=vy*dt;
-        el.style.transform=`perspective(1000px) rotateX(${(1-2*y)*max}deg) rotateY(${(2*x-1)*max}deg)`;
+        if(isAvatar){
+          // Eye movement eases toward the cursor without spring overshoot.
+          const blend=1-Math.exp(-12*dt);
+          x+=(tx-x)*blend;y+=(ty-y)*blend;
+        }else{
+          vx+=(180*(tx-x)-18*vx)/.6*dt;vy+=(180*(ty-y)-18*vy)/.6*dt;
+          x+=vx*dt;y+=vy*dt;
+          el.style.transform=`perspective(1000px) rotateX(${(1-2*y)*max}deg) rotateY(${(2*x-1)*max}deg)`;
+        }
+        if(gaze){gaze.style.setProperty('--gaze-x',`${(x-.5)*14}px`);gaze.style.setProperty('--gaze-y',`${(y-.5)*8}px`);const poseStyle=getComputedStyle(el.querySelector('.pose-a'));gaze.style.opacity=poseStyle.opacity;gaze.style.visibility=poseStyle.visibility;}
         el.style.setProperty('--glare-x',`${x*100}%`);el.style.setProperty('--glare-y',`${y*100}%`);
         if(Math.abs(tx-x)+Math.abs(ty-y)+Math.abs(vx)+Math.abs(vy)>.001)frame=requestAnimationFrame(render);
         else frame=0;
@@ -303,21 +311,16 @@ function setupMotion() {
       function start(){if(!frame){last=performance.now();frame=requestAnimationFrame(render);}}
       const move=event=>{
         if(event.pointerType!=='mouse')return;
-        const rect=(isAvatar?document.querySelector('.story-greeting'):el).getBoundingClientRect();
-        tx=Math.max(0,Math.min(1,(event.clientX-rect.left)/rect.width));
-        ty=Math.max(0,Math.min(1,(event.clientY-rect.top)/rect.height));start();
+        const rect=el.getBoundingClientRect();
+        const originX=isAvatar?rect.left+rect.width*.525:rect.left+rect.width*.5;
+        const originY=isAvatar?rect.top+rect.height*.26:rect.top+rect.height*.5;
+        tx=Math.max(0,Math.min(1,.5+(event.clientX-originX)/(isAvatar?innerWidth*.75:rect.width)));
+        ty=Math.max(0,Math.min(1,.5+(event.clientY-originY)/(isAvatar?innerHeight*.85:rect.height)));start();
       };
       const leave=()=>{tx=ty=.5;start();};
       const surface=isAvatar?document.querySelector('.story-greeting'):el;
-      let wheelTimer;
-      const wheel=event=>{
-        if(!isAvatar || el.getBoundingClientRect().bottom<0 || el.getBoundingClientRect().top>innerHeight)return;
-        ty=.5+Math.sign(event.deltaY)*.3;tx=.5+Math.sign(event.deltaY)*.18;start();
-        clearTimeout(wheelTimer);wheelTimer=setTimeout(leave,160);
-      };
       surface.addEventListener('pointermove',move);surface.addEventListener('pointerleave',leave);
-      if(isAvatar)window.addEventListener('wheel',wheel,{passive:true});
-      hoverCleanups.push(()=>{cancelAnimationFrame(frame);el.style.removeProperty('transform');el.style.removeProperty('--glare-x');el.style.removeProperty('--glare-y');clearTimeout(wheelTimer);surface.removeEventListener('pointermove',move);surface.removeEventListener('pointerleave',leave);if(isAvatar)window.removeEventListener('wheel',wheel);});
+      hoverCleanups.push(()=>{cancelAnimationFrame(frame);if(gaze){gaze.style.opacity='0';gaze.style.removeProperty('--gaze-x');gaze.style.removeProperty('--gaze-y');}el.style.removeProperty('transform');el.style.removeProperty('--glare-x');el.style.removeProperty('--glare-y');surface.removeEventListener('pointermove',move);surface.removeEventListener('pointerleave',leave);});
     });
   }
   if(window.Motion){

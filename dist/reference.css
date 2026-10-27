@@ -409,3 +409,8 @@ header .wordmark .brand-name{margin:0;padding:0;line-height:1.2;vertical-align:b
  .paper-about .text-link{font-size:13px;margin-top:22px}
  .mobile-story-stage .paper-about .about-label{margin-bottom:14px}
 }
+
+/* The gaze layer shares the portrait's exact coordinate system. */
+.hero-gaze{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:0}
+.hero-iris{transform:translate(var(--gaze-x,0px),var(--gaze-y,0px))}
+@media(hover:hover) and (pointer:fine){.avatar-poses{transition:none}}

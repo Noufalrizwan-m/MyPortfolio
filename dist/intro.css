@@ -12,21 +12,23 @@ html.welcome-pending #welcome-intro[hidden]{display:block!important}
 .welcome-floor{position:absolute;inset:72% 0 0;background:linear-gradient(#e9e3da44,#f5f1eb00);border-top:1px solid #e5ded655}
 .welcome-stage{position:absolute;inset:82px 20px 112px;display:grid;place-items:center;perspective:1000px}
 .welcome-office{width:min(650px,80vw);height:100%;max-height:680px;min-height:0}
-.welcome-office-motion{height:100%;width:100%;transform-origin:50% 65%;will-change:transform}
+.welcome-office-motion{height:100%;width:100%}
 .welcome-office img{display:block;width:100%;height:100%;object-fit:contain}
-.welcome-playing .welcome-office img{animation:welcome-typing .2s ease-in-out infinite alternate}
-.welcome-loading{position:absolute;bottom:max(36px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(360px,80vw)}
-.welcome-loading-label{display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:14px;font-size:13px;color:#676a73}
-.welcome-number{font-size:32px;line-height:1;font-weight:500;letter-spacing:-1px;font-variant-numeric:tabular-nums;color:#151820}
-.welcome-percent{margin-left:3px;font-size:13px}
-.welcome-progress{height:3px;background:#e8e3db;overflow:hidden;border-radius:4px}
+.welcome-loading{position:absolute;z-index:3;bottom:max(24px,env(safe-area-inset-bottom));right:max(32px,env(safe-area-inset-right));width:clamp(220px,24vw,340px);text-align:right}
+.welcome-loading-label{display:flex;flex-direction:column;align-items:flex-end;gap:0;margin-bottom:0;font-size:12px;color:#676a73}.welcome-loading-label>span:last-child{display:flex;align-items:baseline;justify-content:flex-end}
+.welcome-number{font-size:clamp(110px,12vw,180px);line-height:.8;font-weight:400;letter-spacing:-.065em;font-variant-numeric:tabular-nums;color:#151820}
+.welcome-percent{margin-left:10px;font-size:clamp(16px,1.8vw,24px)}
+.welcome-progress{margin-left:auto;width:160px;height:2px;background:#e8e3db;overflow:hidden;border-radius:4px}
 .welcome-progress span{display:block;height:100%;width:var(--loaded,1%);background:#c94b20;border-radius:4px}
-@keyframes welcome-typing{from{transform:translateY(0)}to{transform:translateY(.6px)}}
 @media(max-width:700px){
  .welcome-top{padding:18px 6%}.welcome-signature{font-size:13px;gap:9px}.welcome-signature b{width:34px;height:34px;font-size:12px;border-radius:10px}
- .welcome-stage{inset:78px 8px 116px}.welcome-office{width:100%;max-height:530px}
+ .welcome-stage{inset:78px 8px 170px}.welcome-office{width:100%;max-height:530px}
  .welcome-window{left:4%;top:28%;width:90px;height:145px;border-width:5px;opacity:.7}.welcome-art{right:5%;top:32%;width:52px;height:68px;border-width:4px;opacity:.7}
- .welcome-loading{bottom:max(36px,env(safe-area-inset-bottom));width:78vw}
+ .welcome-loading{right:max(22px,env(safe-area-inset-right));bottom:max(24px,env(safe-area-inset-bottom));width:210px}.welcome-number{font-size:104px}.welcome-loading-label{gap:10px;margin-bottom:14px}.welcome-percent{font-size:16px;margin-left:8px}.welcome-progress{width:125px}
 }
-@media(max-height:500px){.welcome-stage{inset:60px 20px 70px}.welcome-top{padding:12px 5%}.welcome-loading{bottom:18px;width:240px}.welcome-loading-label{margin-bottom:7px}.welcome-number{font-size:23px}.welcome-window,.welcome-art{opacity:.4}}
+@media(max-height:500px){.welcome-stage{inset:60px 20px 70px}.welcome-top{padding:12px 5%}.welcome-loading{right:22px;bottom:18px;width:190px}.welcome-loading-label{gap:8px;margin-bottom:10px}.welcome-number{font-size:88px}.welcome-window,.welcome-art{opacity:.4}}
 @media(prefers-reduced-motion:reduce){.welcome-intro{display:none!important}}
+
+/* Retain progress semantics without a visible track. */
+.welcome-progress{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.welcome-loading-label{margin-bottom:0}

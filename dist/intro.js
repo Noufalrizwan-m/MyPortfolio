@@ -7,7 +7,6 @@ window.portfolioIntroReady = new Promise(resolve => {
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const preview = location.hostname === 'localhost' && new URLSearchParams(location.search).get('intro-preview') === 'office';
   const office = intro.querySelector('.welcome-office');
-  const scene = intro.querySelector('.welcome-office-motion');
   const number = intro.querySelector('.welcome-number');
   const bar = intro.querySelector('.welcome-progress');
   const progress = {value:1};
@@ -23,14 +22,6 @@ window.portfolioIntroReady = new Promise(resolve => {
     if (event.key === 'Tab') { event.preventDefault(); intro.focus({preventScroll:true}); }
   }
   function onPreference(event) { if(event.matches) finish(); }
-  function onPointer(event) {
-    if(event.pointerType !== 'mouse' || reduced.matches || finishing || !window.gsap) return;
-    gsap.to(scene, {rotationY:(event.clientX/innerWidth-.5)*9, rotationX:(.5-event.clientY/innerHeight)*4, duration:.55, overwrite:'auto'});
-  }
-  function onWheel(event) {
-    if(reduced.matches || finishing || !window.gsap) return;
-    gsap.to(scene, {rotationY:Math.sign(event.deltaY)*5, duration:.22, overwrite:'auto', onComplete:()=>gsap.to(scene,{rotationY:0,duration:.55})});
-  }
   function finish() {
     if(finishing) return;
     finishing = true;
@@ -40,8 +31,6 @@ window.portfolioIntroReady = new Promise(resolve => {
     Promise.race([window.portfolioHeroReady, new Promise(done=>setTimeout(done,3000))]).then(()=>{
       const complete = () => {
         intro.hidden = true;
-        intro.removeEventListener('pointermove',onPointer);
-        intro.removeEventListener('wheel',onWheel);
         document.removeEventListener('keydown',onKey);
         reduced.removeEventListener('change',onPreference);
         protectedContent.forEach(([element,wasInert])=>{element.inert=wasInert;});
@@ -58,8 +47,6 @@ window.portfolioIntroReady = new Promise(resolve => {
   intro.hidden=false;
   document.addEventListener('keydown',onKey);
   reduced.addEventListener('change',onPreference);
-  intro.addEventListener('pointermove',onPointer,{passive:true});
-  intro.addEventListener('wheel',onWheel,{passive:true});
   if(!preview) timer=setTimeout(finish,6500);
   update();
   const images=[...intro.querySelectorAll('img')];
@@ -70,7 +57,7 @@ window.portfolioIntroReady = new Promise(resolve => {
     protectedContent.forEach(([el])=>{el.inert=true;});
     intro.focus({preventScroll:true});
     intro.classList.add('welcome-playing');
-    gsap.fromTo(office,{autoAlpha:0,y:8},{autoAlpha:1,y:0,duration:.35});
+    gsap.fromTo(office,{autoAlpha:0},{autoAlpha:1,duration:.35});
     counter=gsap.to(progress,{value:90,duration:2.4,ease:'power1.inOut',onUpdate:update,onComplete:finish});
     if(preview) {counter.pause(1.2);update();}
   }).catch(finish);
