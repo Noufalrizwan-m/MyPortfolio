@@ -288,7 +288,8 @@ function setupMotion() {
   });
   if(matchMedia('(hover: hover) and (pointer: fine)').matches){
     document.querySelectorAll('[data-tilt],.avatar-poses').forEach(el=>{
-      const max=Number(el.dataset.tilt)||4;
+      const isAvatar=el.classList.contains('avatar-poses');
+      const max=Number(el.dataset.tilt)||(isAvatar?7:4);
       let x=.5,y=.5,tx=.5,ty=.5,vx=0,vy=0,frame=0,last=0;
       function render(now){
         const dt=Math.min((now-last)/1000||1/60,1/30);last=now;
@@ -302,13 +303,21 @@ function setupMotion() {
       function start(){if(!frame){last=performance.now();frame=requestAnimationFrame(render);}}
       const move=event=>{
         if(event.pointerType!=='mouse')return;
-        const rect=el.getBoundingClientRect();
+        const rect=(isAvatar?document.querySelector('.story-greeting'):el).getBoundingClientRect();
         tx=Math.max(0,Math.min(1,(event.clientX-rect.left)/rect.width));
         ty=Math.max(0,Math.min(1,(event.clientY-rect.top)/rect.height));start();
       };
       const leave=()=>{tx=ty=.5;start();};
-      el.addEventListener('pointermove',move);el.addEventListener('pointerleave',leave);
-      hoverCleanups.push(()=>{cancelAnimationFrame(frame);el.style.removeProperty('transform');el.style.removeProperty('--glare-x');el.style.removeProperty('--glare-y');el.removeEventListener('pointermove',move);el.removeEventListener('pointerleave',leave);});
+      const surface=isAvatar?document.querySelector('.story-greeting'):el;
+      let wheelTimer;
+      const wheel=event=>{
+        if(!isAvatar || el.getBoundingClientRect().bottom<0 || el.getBoundingClientRect().top>innerHeight)return;
+        ty=.5+Math.sign(event.deltaY)*.3;tx=.5+Math.sign(event.deltaY)*.18;start();
+        clearTimeout(wheelTimer);wheelTimer=setTimeout(leave,160);
+      };
+      surface.addEventListener('pointermove',move);surface.addEventListener('pointerleave',leave);
+      if(isAvatar)window.addEventListener('wheel',wheel,{passive:true});
+      hoverCleanups.push(()=>{cancelAnimationFrame(frame);el.style.removeProperty('transform');el.style.removeProperty('--glare-x');el.style.removeProperty('--glare-y');clearTimeout(wheelTimer);surface.removeEventListener('pointermove',move);surface.removeEventListener('pointerleave',leave);if(isAvatar)window.removeEventListener('wheel',wheel);});
     });
   }
   if(window.Motion){
